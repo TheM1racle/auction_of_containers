@@ -1,9 +1,10 @@
 import sqlite3
 
-DB_NAME = "auction_base.db"
+DB_NAME_USUAL = "auction_base.db"
+DB_NAME_USUAL = "auction_base_photos.db"
 
 def get_db_connection():
-    conn = sqlite3.connect(DB_NAME)
+    conn = sqlite3.connect(DB_NAME_USUAL)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -50,9 +51,9 @@ class Storage():
             conn.close()
 
 tabak = Storage()
-tabak.insert_data("john", 15000)
-tabak.insert_data("misha", 11000)
-tabak.insert_data("holo", 25000)
+#tabak.insert_data("john", 15000)
+#tabak.insert_data("misha", 11000)
+#tabak.insert_data("holo", 25000)
 
 tabak.get_all_history()
 
