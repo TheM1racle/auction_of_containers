@@ -2,4 +2,4 @@ import subprocess
 
 filename = "gallery/horse.jpg"
 
-subprocess.run(['chafa', filename, '--size', '150x150'])
+subprocess.run(['chafa', filename, '--size', '100x100'])

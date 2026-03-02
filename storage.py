@@ -1,7 +1,8 @@
 import sqlite3
+import random
 
 DB_NAME_USUAL = "auction_base.db"
-DB_NAME_USUAL = "auction_base_photos.db"
+
 
 def get_db_connection():
     conn = sqlite3.connect(DB_NAME_USUAL)
@@ -19,7 +20,7 @@ class Storage():
                 conn.execute("""
                     CREATE TABLE IF NOT EXISTS users (
                         id INTEGER PRIMARY KEY AUTOINCREMENT,
-                        author TEXT,
+                        name TEXT UNIQUE,
                         bet INTEGER)
                 """)
         finally:
@@ -30,7 +31,7 @@ class Storage():
         try: 
             with conn:
                 conn.execute("""
-                    INSERT INTO users (author, bet) VALUES (?, ?)
+                    INSERT INTO users (name, bet) VALUES (?, ?)
                 """, (name, bet))
                 conn.commit()
         finally:
@@ -43,17 +44,42 @@ class Storage():
             with conn:
                 cursor = conn.execute("""
                     SELECT * FROM users
-                    ORDER BY id DESC
+                    ORDER BY bet DESC
                 """)
                 for row in cursor:
-                    print(f"id: {row['id']}, author: {row['author']}, bet: {row['bet']}")
+                    print(f"id: {row['id']}, name: {row['name']}, bet: {row['bet']}")
+        finally:
+            conn.close()
+    
+    def get_update_bet(self, name, bet):
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        sql_update = """UPDATE users SET bet = ? WHERE name = ? AND bet < ?"""
+        try:
+            
+            with conn:
+                cursor.execute(sql_update, (bet, name, bet))
+                conn.commit()
+                if cursor.rowcount > 0:
+                    print(f"Success! bet was updated to {bet}")
+                else:
+                    print(f"Fail :(    your new bet {bet} less then old ")
         finally:
             conn.close()
 
+
+
 tabak = Storage()
-#tabak.insert_data("john", 15000)
-#tabak.insert_data("misha", 11000)
-#tabak.insert_data("holo", 25000)
+print("Name, your bet")
+for i in range(random.randint(1,5)):
+    name = input("Enter ur name: ")
+    bet = int(input("Enter your bet: "))
+    tabak.insert_data(name, bet)
+
 
 tabak.get_all_history()
-
+print("update your bet")
+name = input("Enter ur name: ")
+bet = int(input("Enter your bet: "))
+tabak.get_update_bet(name, bet)
+tabak.get_all_history()
